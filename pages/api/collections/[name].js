@@ -25,12 +25,26 @@ function downloadImage(url, filepath, filename) {
 
 export default function handler(req, res) {
   const { name } = req.query;
-  const { createdAt, imageUrl } = req.body;
-  if (req.method === "POST") {
-    const uuid = uuidv4();
-    downloadImage(imageUrl, `public/collections/${name}`, uuid);
-    res.status(200).json({ echo: { name, createdAt, imageUrl } });
-  } else {
-    res.status(200).json({});
+  const { createdAt, image, imageUrl } = req.body;
+
+  switch (req.method) {
+    case "POST":
+      const uuid = uuidv4();
+      downloadImage(imageUrl, `public/collections/${name}`, uuid).then(() => {
+        res.status(200).json({ echo: { name, createdAt, imageUrl } });
+      });
+      break;
+
+    case "DELETE":
+      try {
+        const deleted = fs.rmSync(`public/collections/${name}/${image}`);
+        res.status(200).json({ message: "ok" });
+      } catch (error) {
+        res.status(404).json({ message: `${image} not found` });
+      }
+      break;
+
+    default:
+      res.status(200).json({});
   }
 }
