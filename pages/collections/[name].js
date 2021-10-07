@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import styles from "./collections.module.scss";
 
 const Collection = ({ images }) => {
   const router = useRouter();
@@ -70,17 +71,17 @@ const Collection = ({ images }) => {
     >
       <Link href="/">Zurück</Link>
       <h2>Collection: {name}</h2>
-      <div className="images">
+      <div className={styles.images}>
         {images.map((i) => {
           return (
-            <div key={i}>
-              <img
-                alt=""
-                src={`/collections/Test/${i}`}
-                width="200"
-                height="200"
-              />
-              <button onClick={() => postDeleteImage(i)}>X</button>
+            <div key={i} className={styles.imageContainer}>
+              <img src={`/collections/Test/${i}`} />
+              <button
+                className={styles.deleteButton}
+                onClick={() => postDeleteImage(i)}
+              >
+                X
+              </button>
             </div>
           );
         })}
