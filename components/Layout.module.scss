@@ -1,0 +1,4 @@
+.layout {
+    display: grid;
+    grid-template-rows: minmax(calc(100vh - 60px), auto) 60px;
+}

@@ -1,0 +1,12 @@
+button {
+    background: var(--color-dark);
+    color: var(--color-light);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    &:hover {
+        color: var(--color-dark);
+        background: var(--color-semilight);
+    }
+}

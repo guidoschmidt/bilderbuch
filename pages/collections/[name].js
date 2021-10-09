@@ -34,19 +34,20 @@ const Collection = ({ images }) => {
     refresh();
   };
 
+  const onPaste = (e) => {
+    // Stop data actually being pasted into div
+    e.stopPropagation();
+    e.preventDefault();
+    // Get pasted data via clipboard API
+    const clipboardData = e.clipboardData || window.clipboardData;
+    const pastedData = clipboardData.getData("Text");
+    postSaveImageDataFromUrl(pastedData);
+  };
+
   useEffect(() => {
-    const pasteListener = window.addEventListener("paste", (e) => {
-      // Stop data actually being pasted into div
-      e.stopPropagation();
-      e.preventDefault();
-      // Get pasted data via clipboard API
-      const clipboardData = e.clipboardData || window.clipboardData;
-      const pastedData = clipboardData.getData("Text");
-      // if (e.key === "v" && e.metaKey) console.log(e);
-      postSaveImageDataFromUrl(pastedData);
-    });
+    window.addEventListener("paste", onPaste, false);
     return () => {
-      window.removeEventListener("paste", pasteListener);
+      window.removeEventListener("paste", onPaste, false);
     };
   }, []);
 
@@ -69,13 +70,32 @@ const Collection = ({ images }) => {
         console.log("Drop");
       }}
     >
-      <Link href="/">Zurück</Link>
-      <h2>Collection: {name}</h2>
+      <Link href="/">
+        <button>Back</button>
+      </Link>
+      <h2>
+        Collection: {name}{" "}
+        <button
+          onClick={() => {
+            alert("Bearbeiten");
+          }}
+        >
+          …
+        </button>
+      </h2>
+      <h3>{images.length} Pictures</h3>
+
+      {images.length === 0 && (
+        <h4>
+          Use <code>Ctrl/Cmd + v</code> to paste image urls
+        </h4>
+      )}
+
       <div className={styles.images}>
         {images.map((i) => {
           return (
             <div key={i} className={styles.imageContainer}>
-              <img src={`/collections/Test/${i}`} />
+              <img className={styles.image} src={`/collections/${name}/${i}`} />
               <button
                 className={styles.deleteButton}
                 onClick={() => postDeleteImage(i)}
@@ -97,7 +117,8 @@ export async function getServerSideProps(context) {
     props: {
       images: fs
         .readdirSync(`public/collections/${name}/`)
-        .filter((f) => ![".DS_Store"].includes(f)),
+        .filter((f) => ![".DS_Store"].includes(f))
+        .filter((f) => f.match(/.json/) === null),
     },
   };
 }

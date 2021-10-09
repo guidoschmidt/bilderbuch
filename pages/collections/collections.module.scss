@@ -1,41 +1,59 @@
+@import "../../styles/1-tools/_mixins.scss";
+
+.backButton {
+    padding: 20px;
+    background: var(--color-dark);
+}
+
 .images {
-    display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    display: grid;
+    width: 100%;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-rows: masonry;
 }
 
 .imageContainer {
+    @include shadow;
     margin: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01),
-                0 20px 30px rgba(0, 0, 0, 0.05),
-                0 30px 60px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow: hidden;
+    border-radius: 30px;
+    background-size: cover;
     &:hover {
         .deleteButton {
-            display: flex;
+            opacity: 1;
         }
     }
 }
 
-.deleteButton {
-    display: none;
-    position: absolute;
+.image {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background-size: cover;
+}
+
+.deleteButton {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
     justify-content: center;
     align-items: center;
     border: 0;
     font-size: 100px;
     font-family: monospace;
     backdrop-filter: blur(10px);
+    transition: background 250ms ease,
+                opacity 250ms ease;
     &:hover {
         color: white;
-        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.75);
     }
 }

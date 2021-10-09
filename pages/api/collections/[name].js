@@ -11,9 +11,8 @@ function downloadImage(url, filepath, filename) {
         res
           .pipe(fs.createWriteStream(`${filepath}/${filename}.${fileExt}`))
           .on("error", reject)
-          .once("close", () => resolve(filepath));
+          .once("close", () => resolve({ filepath, filename, fileExt }));
       } else {
-        // Consume response data to free up memory
         res.resume();
         reject(
           new Error(`Request Failed With a Status Code: ${res.statusCode}`)
@@ -30,9 +29,19 @@ export default function handler(req, res) {
   switch (req.method) {
     case "POST":
       const uuid = uuidv4();
-      downloadImage(imageUrl, `public/collections/${name}`, uuid).then(() => {
-        res.status(200).json({ echo: { name, createdAt, imageUrl } });
-      });
+      downloadImage(imageUrl, `public/collections/${name}`, uuid).then(
+        ({ filepath, filename }) => {
+          const jsonData = JSON.stringify({
+            imageUrl,
+          });
+          console.log(jsonData);
+          const json = fs.writeFileSync(
+            `${filepath}/${filename}.json`,
+            jsonData
+          );
+          res.status(200).json({ echo: { name, createdAt, imageUrl } });
+        }
+      );
       break;
 
     case "DELETE":
