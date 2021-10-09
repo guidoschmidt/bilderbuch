@@ -1,13 +1,42 @@
 const fs = require("fs");
+const path = require("path");
 const client = require("https");
 const { v4: uuidv4 } = require("uuid");
+const rp = require("request-promise");
+const cheerio = require("cheerio");
 
-function downloadImage(url, filepath, filename) {
+function scrapeWebsite(url) {
   return new Promise((resolve, reject) => {
+    rp(url)
+      .then((html) => {
+        const $ = cheerio.load(html);
+        const imageNodes = $("img");
+        const images = Array.from(imageNodes).map((img) => {
+          return {
+            alt: img.attribs.alt,
+            src: img.attribs.src,
+          };
+        });
+        resolve(images);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+function downloadImage(url, filepath, filename, data) {
+  return new Promise((resolve, reject) => {
+    console.log(`Download Image: `, url);
     client.get(url, (res) => {
       if (res.statusCode === 200) {
         const mime = res.headers["content-type"];
         const fileExt = mime.split("/").pop();
+        const jsonData = JSON.stringify({
+          src: url,
+          ...data,
+        });
+        fs.writeFileSync(`${filepath}/${filename}.json`, jsonData);
         res
           .pipe(fs.createWriteStream(`${filepath}/${filename}.${fileExt}`))
           .on("error", reject)
@@ -28,25 +57,46 @@ export default function handler(req, res) {
 
   switch (req.method) {
     case "POST":
-      const uuid = uuidv4();
-      downloadImage(imageUrl, `public/collections/${name}`, uuid).then(
-        ({ filepath, filename }) => {
-          const jsonData = JSON.stringify({
-            imageUrl,
+      if (imageUrl.includes("pinterest")) {
+        scrapeWebsite(imageUrl).then((images) => {
+          const downloadPromises = images.map((img) => {
+            const uuid = uuidv4();
+            return downloadImage(
+              img.src,
+              `public/collections/${name}`,
+              uuid,
+              img
+            );
           });
-          console.log(jsonData);
-          const json = fs.writeFileSync(
-            `${filepath}/${filename}.json`,
-            jsonData
-          );
+          Promise.all(downloadPromises)
+            .then(() => {
+              res.status(200).json({ message: "ok" });
+            })
+            .catch((err) => {
+              res.status(500).json({ message: err });
+            });
+        });
+      } else {
+        const uuid = uuidv4();
+        const jsonData = {};
+        downloadImage(
+          imageUrl,
+          `public/collections/${name}`,
+          uuid,
+          jsonData
+        ).then(({ filepath, filename }) => {
           res.status(200).json({ echo: { name, createdAt, imageUrl } });
-        }
-      );
+        });
+      }
       break;
 
     case "DELETE":
       try {
-        const deleted = fs.rmSync(`public/collections/${name}/${image}`);
+        const parsed = path.parse(image);
+        const deleted = fs.rmSync(`public/collections/${name}/${parsed.base}`);
+        const deletedJson = fs.rmSync(
+          `public/collections/${name}/${parsed.name}.json`
+        );
         res.status(200).json({ message: "ok" });
       } catch (error) {
         res.status(404).json({ message: `${image} not found` });

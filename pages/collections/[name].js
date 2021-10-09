@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { LoadingIndicator } from "../../components/components";
 import styles from "./collections.module.scss";
 
 const Collection = ({ images }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { name } = router.query;
 
@@ -12,6 +14,7 @@ const Collection = ({ images }) => {
   };
 
   const postDeleteImage = async (image) => {
+    setIsLoading(true);
     const res = await fetch(`/api/collections/${name}`, {
       method: "DELETE",
       body: JSON.stringify({ image: image }),
@@ -20,10 +23,12 @@ const Collection = ({ images }) => {
       },
     });
     refresh();
+    setIsLoading(false);
   };
 
   const postSaveImageDataFromUrl = async (url) => {
     if (url.length === 0) return;
+    setIsLoading(true);
     const res = await fetch(`/api/collections/${name}`, {
       method: "POST",
       body: JSON.stringify({ imageUrl: url }),
@@ -32,6 +37,7 @@ const Collection = ({ images }) => {
       },
     });
     refresh();
+    setIsLoading(false);
   };
 
   const onPaste = (e) => {
@@ -91,21 +97,28 @@ const Collection = ({ images }) => {
         </h4>
       )}
 
-      <div className={styles.images}>
-        {images.map((i) => {
-          return (
-            <div key={i} className={styles.imageContainer}>
-              <img className={styles.image} src={`/collections/${name}/${i}`} />
-              <button
-                className={styles.deleteButton}
-                onClick={() => postDeleteImage(i)}
-              >
-                X
-              </button>
-            </div>
-          );
-        })}
-      </div>
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <div className={styles.images}>
+          {images.map((i) => {
+            return (
+              <div key={i} className={styles.imageContainer}>
+                <img
+                  className={styles.image}
+                  src={`/collections/${name}/${i}`}
+                />
+                <button
+                  className={styles.deleteButton}
+                  onClick={() => postDeleteImage(i)}
+                >
+                  X
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
