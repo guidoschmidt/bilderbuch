@@ -1,12 +1,29 @@
-@import "../styles/1-tools/_mixins.scss";
+@import "../styles/0-settings/_breakpoints";
+@import "../styles/1-tools/_mixins";
+@import "../styles/1-tools/_media-queries";
+
+.logoTitle {
+    font-weight: bold;
+}
+
+.subheading {
+    opacity: 0.5;
+    margin-bottom: 40px;
+}
 
 .collections {
     justify-content: center;
     align-items: center;
     display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
     grid-template-rows: masonry;
+    grid-template-columns: 1fr;
+    @include from($breakpoint-tablet) {
+        grid-template-columns: repeat(2, 50%);
+    }
+    @include from($breakpoint-desktop) {
+        grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
+    }
 }
 
 .collectionCard {
@@ -14,13 +31,18 @@
     transition: box-shadow 300ms ease;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     padding: 20px;
     border-radius: 20px;
     background-color: var(--color-light);
     cursor: pointer;
+    header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-column-gap: 10px;
+    }
     h4 {
         margin-bottom: 15px;
+        word-break: break-all;
     }
     &:hover {
         @include shadow-hover;
@@ -29,9 +51,9 @@
 
 .imageList {
     display: grid;
-    grid-template-columns: repeat(2, minmax(50%, 1fr));
+    grid-template-columns: repeat(2, minmax(auto, 1fr));
     grid-template-rows: repeat(2, minmax(200px, 1fr));
-    grid-gap: 10px;
+    grid-gap: 5px;
     &:hover {
         .previewImage {
             transform: scale(1.05);
@@ -59,7 +81,9 @@
 }
 
 .pictureCount {
-    margin: 10px 0 15px
+    margin: 5px 0 20px;
+    align-self: flex-start;
+    opacity: 0.5;
 }
 
 .buttonAdd {
@@ -73,4 +97,67 @@
     position: fixed;
     right: calc(var(--size) / 2);
     bottom: calc(var(--size) / 2);
+}
+
+.buttonDeleteCollection {
+    --size: 48px;
+    border-radius: 42px;
+    width: var(--size);
+    height: var(--size);
+    max-width: var(--size);
+    max-height: var(--size);
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    grid-row: span 2;
+    &:hover {
+        background: var(--color-light);
+    }
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.modalCreate {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-dark-50);
+    color: var(--color-light);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(100px);
+}
+
+.newCollectionTitle {
+    font-size: 4.25rem;
+    margin-bottom: 40px;
+}
+
+.newCollectionNameInput {
+    font-size: 4.25rem;
+    padding: 30px 50px;
+    border-radius: 5rem;
+    margin-bottom: 40px;
+    &:active {
+        border: none;
+        outline: none;
+    }
+    &:focus {
+        border: none;
+        outline: none;
+    }
+}
+
+.modalCreatActions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px
 }

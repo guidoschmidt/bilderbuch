@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@svgr/webpack": "^5.5.0",
     "@types/react": "^17.0.27",
     "cheerio": "^1.0.0-rc.10",
     "next": "11.1.2",

@@ -1,8 +1,37 @@
 @import "../../styles/1-tools/_mixins.scss";
 
+.header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-column-gap: 20px;
+}
+
 .backButton {
-    padding: 20px;
-    background: var(--color-dark);
+    --size: 48px;
+    grid-row: span 3;
+    width: var(--size);
+    height: var(--size);
+    border-radius: var(--size);
+    display: flex;
+    padding: 15px;
+    justify-content: center;
+    align-items: center;
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.pictureCount {
+    opacity: 0.5;
+    margin: 5px 0 20px;
+}
+
+.collectionNamen {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
 }
 
 .images {

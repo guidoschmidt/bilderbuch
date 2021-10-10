@@ -1,8 +1,10 @@
 /* 0 Settings */
 @import "./0-settings/_colors";
+@import "./0-settings/_breakpoints";
 
 /* 1 Tools */
-@import "./0-settings/_colors";
+@import "./1-tools/_media-queries";
+@import "./1-tools/_mixins";
 
 /* 2 Generic */
 @import "./2-generic/_reset";
@@ -12,6 +14,7 @@
 @import "./3-base/_buttons";
 @import "./3-base/_headlines";
 @import "./3-base/_text";
+@import "./3-base/_input";
 
 /* 4. Objects */
 

@@ -1,3 +1,5 @@
+@import "../1-tools/_mixins.scss";
+
 button {
     background: var(--color-dark);
     color: var(--color-light);
@@ -5,6 +7,7 @@ button {
     padding: 10px 20px;
     border-radius: 20px;
     cursor: pointer;
+    transition: background-color 100ms linear;
     &:hover {
         color: var(--color-dark);
         background: var(--color-semilight);

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { LoadingIndicator } from "../../components/components";
+import { LoadingIndicator, Layout } from "../../components/components";
 import styles from "./collections.module.scss";
+import IconX from "../../svg/x.svg";
+import IconBack from "../../svg/back.svg";
 
 const Collection = ({ images }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -58,7 +60,7 @@ const Collection = ({ images }) => {
   }, []);
 
   return (
-    <div
+    <Layout
       onDragEnter={(e) => {
         e.preventDefault();
         console.log("Drag Start");
@@ -76,20 +78,18 @@ const Collection = ({ images }) => {
         console.log("Drop");
       }}
     >
-      <Link href="/">
-        <button>Back</button>
-      </Link>
-      <h2>
-        Collection: {name}{" "}
-        <button
-          onClick={() => {
-            alert("Bearbeiten");
-          }}
-        >
-          …
-        </button>
-      </h2>
-      <h3>{images.length} Pictures</h3>
+      <header className={styles.header}>
+        <Link href="/">
+          <button className={styles.backButton}>
+            <IconBack />
+          </button>
+        </Link>
+        <h4>Collection</h4>
+        <h2 className={styles.collectionNamen}>{name}</h2>
+        <h5 className={styles.pictureCount}>
+          {images.length} {images.length === 1 ? "Picture" : "Pictures"}
+        </h5>
+      </header>
 
       {images.length === 0 && (
         <h4>
@@ -112,14 +112,14 @@ const Collection = ({ images }) => {
                   className={styles.deleteButton}
                   onClick={() => postDeleteImage(i)}
                 >
-                  X
+                  <IconX />
                 </button>
               </div>
             );
           })}
         </div>
       )}
-    </div>
+    </Layout>
   );
 };
 
