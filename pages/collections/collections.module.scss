@@ -2,17 +2,38 @@
 
 .header {
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: repeat(3, auto);
-    grid-column-gap: 20px;
+    grid-template-columns: auto auto 1fr;
+    grid-column-gap: 50px;
 }
 
 .backButton {
     --size: 48px;
-    grid-row: span 3;
     width: var(--size);
     height: var(--size);
     border-radius: var(--size);
+    display: flex;
+    padding: 15px;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-start;
+    align-self: center;
+    margin-left: 50px;
+}
+
+.downloadButton {
+    --size: 48px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 10px;
     display: flex;
     padding: 15px;
     justify-content: center;

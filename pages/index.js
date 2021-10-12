@@ -28,6 +28,9 @@ const Collections = ({ collections }) => {
         "Content-Type": "application/json",
       },
     });
+    if (res.status === 200) {
+      setShowModal(false);
+    }
     refresh();
   };
 

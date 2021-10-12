@@ -5,14 +5,36 @@ import { LoadingIndicator, Layout } from "../../components/components";
 import styles from "./collections.module.scss";
 import IconX from "../../svg/x.svg";
 import IconBack from "../../svg/back.svg";
+import IconDownload from "../../svg/download.svg";
 
 const Collection = ({ images }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isProcessingDownload, setIsProcessingDownload] = useState(false);
   const router = useRouter();
   const { name } = router.query;
 
   const refresh = () => {
     router.replace(router.asPath);
+  };
+
+  const requestDownload = async (name) => {
+    setIsProcessingDownload(true);
+    const res = await fetch(`/api/collections/${name}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.status === 200) {
+      const json = await res.json();
+      console.log(json.link);
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `${name}.zip`;
+      downloadLink.href = json.link;
+      downloadLink.click();
+      downloadLink.remove();
+    }
+    setIsProcessingDownload(false);
   };
 
   const postDeleteImage = async (image) => {
@@ -84,11 +106,22 @@ const Collection = ({ images }) => {
             <IconBack />
           </button>
         </Link>
-        <h4>Collection</h4>
-        <h2 className={styles.collectionNamen}>{name}</h2>
-        <h5 className={styles.pictureCount}>
-          {images.length} {images.length === 1 ? "Picture" : "Pictures"}
-        </h5>
+        <div>
+          <h4>Collection</h4>
+          <h2 className={styles.collectionNamen}>{name}</h2>
+          <h5 className={styles.pictureCount}>
+            {images.length} {images.length === 1 ? "Picture" : "Pictures"}
+          </h5>
+        </div>
+        <div className={styles.actions}>
+          <button
+            disabled={isProcessingDownload}
+            className={styles.downloadButton}
+            onClick={() => requestDownload(name)}
+          >
+            <IconDownload />
+          </button>
+        </div>
       </header>
 
       {images.length === 0 && (

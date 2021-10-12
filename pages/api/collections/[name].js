@@ -4,6 +4,28 @@ const client = require("https");
 const { v4: uuidv4 } = require("uuid");
 const rp = require("request-promise");
 const cheerio = require("cheerio");
+const archiver = require("archiver");
+
+function archiveCollection(filepath, folderName) {
+  return new Promise((resolve, reject) => {
+    const output = fs.createWriteStream(`public/${folderName}.zip`);
+    const archive = archiver("zip");
+    output.on("close", () => {
+      console.log(archive.pointer() + " total bytes");
+      console.log(
+        "archiver has been finalized and the output file descriptor has closed."
+      );
+      resolve();
+    });
+    archive.on("error", (err) => {
+      reject(err);
+    });
+    archive.pipe(output);
+    // append files from a sub-directory, putting its contents at the root of archive
+    archive.directory(`${filepath}${folderName}`, false);
+    archive.finalize();
+  });
+}
 
 function scrapeWebsite(url) {
   return new Promise((resolve, reject) => {
@@ -56,6 +78,16 @@ export default function handler(req, res) {
   const { createdAt, image, imageUrl } = req.body;
 
   switch (req.method) {
+    case "GET":
+      archiveCollection(`public/collections/`, name)
+        .then(() => {
+          res.status(200).json({ link: `/${name}.zip` });
+        })
+        .catch((err) => {
+          res.status(500).json({ error: err });
+        });
+      break;
+
     case "POST":
       if (imageUrl.includes("pinterest")) {
         scrapeWebsite(imageUrl).then((images) => {

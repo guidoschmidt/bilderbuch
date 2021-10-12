@@ -12,4 +12,14 @@ button {
         color: var(--color-dark);
         background: var(--color-semilight);
     }
+    &:disabled {
+        background: var(--color-dark);
+        color: var(--color-dark);
+        opacity: 0.5;
+        &:hover {
+            background: var(--color-dark);
+            color: var(--color-dark);
+            opacity: 0.5;
+        }
+    }
 }
